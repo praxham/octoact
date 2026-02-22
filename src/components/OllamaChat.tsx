@@ -22,6 +22,15 @@ const OllamaChat = () => {
   const [llmResponse, setLlmResponse] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [inputKey, setInputKey] = useState(0);
+  const [showCursor, setShowCursor] = useState(true);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setShowCursor((prev) => !prev);
+    }, 500);
+
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const match = userPrompt.match(/@(\S+)/);
@@ -148,17 +157,16 @@ const OllamaChat = () => {
       </Box>
       <Box
         flexDirection="row"
-        gap={1}
-        borderStyle="round"
+        borderStyle="single"
         borderColor="#999999"
-        borderBottom={true}
-        borderTop={true}
-        borderLeft={false}
-        borderRight={false}
+        gap={1}
+        paddingLeft={1}
+        paddingRight={1}
       >
         <Box backgroundColor={"#999999"} width={1} height={1} marginRight={1} />
         <TextInput
           key={inputKey}
+          showCursor={showCursor}
           placeholder="What file you want octo to make or change?"
           value={userPrompt}
           onChange={setUserPrompt}
