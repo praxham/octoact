@@ -1,7 +1,7 @@
 import { Box, render, useStdout } from "ink";
 import { useState, useEffect } from "react";
 import OllamaInstancePicker from "./components/OllamaInstancePicker";
-import Title from "./components/Title";
+import Heading from "./components/Heading";
 import { userData } from "./user";
 import ModelPicker from "./components/ModelPicker";
 import OllamaChat from "./components/OllamaChat";
@@ -31,7 +31,7 @@ const App = () => {
       justifyContent="flex-end"
     >
       <Box flexDirection="column">
-        <Title />
+        <Heading />
         {!userData.pickedInstance && <OllamaInstancePicker />}
         {!userData.pickedModle && userData.pickedInstance && <ModelPicker />}
         {userData.selectedModelName && <OllamaChat />}

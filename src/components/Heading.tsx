@@ -3,8 +3,9 @@ import { primaryColor } from "../functionGroups/common";
 import OctoAvatar from "./OctoAvatar";
 import { userData } from "../user";
 
-const Title = () => {
+const Heading = () => {
   const setupMode = !userData.pickedInstance || !userData.pickedModle;
+  const commands = ["@: to add files"];
   return (
     <Box
       flexDirection="row"
@@ -20,11 +21,14 @@ const Title = () => {
         </Text>
         <OctoAvatar />
       </Box>
-      <Box width="auto" flexDirection="column" gap={1} alignItems="flex-start">
+      <Box width="50%" flexDirection="column" gap={1} alignItems="flex-start">
         <Text>Commands to run</Text>
+        {commands.map((item) => (
+          <Text>{item}</Text>
+        ))}
       </Box>
     </Box>
   );
 };
 
-export default Title;
+export default Heading;
