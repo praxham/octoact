@@ -10,29 +10,37 @@ export const getBaseURL = () =>
   userData.ollamaExternal || "http://localhost:11434/api";
 
 export const updateOllamaUrl = async (url: string) => {
-  await updateFileWithContent(
-    "./src/user.ts",
-    /ollamaExternal: ".*",/,
-    `ollamaExternal: "${url}",`,
-  );
+  const validationUrl = url || "http://localhost:11434/api";
+  try {
+    const tagsResponse = await fetch(`${validationUrl}/tags`);
+    const data = await tagsResponse.json();
 
-  await updateFileWithContent(
-    "./src/user.ts",
-    /pickedInstance: (true|false),/,
-    "pickedInstance: true,",
-  );
+    if (!data?.models || !Array.isArray(data.models)) {
+      throw new Error(
+        "Invalid response from Ollama. Check your URL configuration.",
+      );
+    }
 
-  userData.ollamaExternal = url;
+    await updateFileWithContent(
+      "./src/user.ts",
+      /ollamaExternal: ".*",/,
+      `ollamaExternal: "${url}",`,
+    );
 
-  console.log(`
-Choose your ollama:
-1. local (Recommended)
-2. hosted
+    await updateFileWithContent(
+      "./src/user.ts",
+      /pickedInstance: (true|false),/,
+      "pickedInstance: true,",
+    );
 
-Picked: 
-2. hosted: ${url}
-`);
-  return null;
+    userData.ollamaExternal = url;
+    userData.pickedInstance = true;
+
+    return true;
+  } catch (e) {
+    console.error(`\n❌ Could not connect to Ollama at ${validationUrl}:`, e);
+    return false;
+  }
 };
 
 export const getModels = async () => {

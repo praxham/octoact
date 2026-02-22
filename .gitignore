@@ -38,3 +38,6 @@ GEMINI.md
 
 # Test Output Files
 *.js
+
+# Files to ignore during development
+src/user.ts

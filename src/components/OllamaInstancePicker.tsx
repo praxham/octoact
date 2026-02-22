@@ -1,12 +1,11 @@
 import { Box, Text } from "ink";
 import TextInput from "ink-text-input";
-import {
-  secondaryColor,
-  updateFileWithContent,
-} from "../functionGroups/common";
+import { secondaryColor } from "../functionGroups/common";
 import { useState } from "react";
+import { updateOllamaUrl } from "../functionGroups/ollama";
 
 const OllamaInstancePicker = () => {
+  const [errorMessage, setErrorMessage] = useState("");
   const [ollamaConfig, setOllamaConfig] = useState<{
     choice: 1 | 2 | null;
     customOllamaUrl: string;
@@ -19,11 +18,12 @@ const OllamaInstancePicker = () => {
 
   const handleChoiceSubmit = async () => {
     if (ollamaConfig.choice === 1) {
-      await updateFileWithContent(
-        "./src/user.ts",
-        /pickedInstance: (true|false),/,
-        "pickedInstance: true,",
-      );
+      const success = await updateOllamaUrl(""); // "" will use local default
+      if (!success) {
+        setErrorMessage(
+          "Could not connect to local Ollama. Make sure it's running.",
+        );
+      }
     } else if (ollamaConfig.choice === 2) {
       setOllamaConfig((prev) => ({ ...prev, step: "url" }));
     }
@@ -31,16 +31,14 @@ const OllamaInstancePicker = () => {
 
   const handleUrlSubmit = async () => {
     if (ollamaConfig.customOllamaUrl) {
-      await updateFileWithContent(
-        "./src/user.ts",
-        /ollamaExternal: ".*",/,
-        `ollamaExternal: "${ollamaConfig.customOllamaUrl}",`,
-      );
-      await updateFileWithContent(
-        "./src/user.ts",
-        /pickedInstance: (true|false),/,
-        "pickedInstance: true,",
-      );
+      setErrorMessage(""); // clear previous errors
+      const success = await updateOllamaUrl(ollamaConfig.customOllamaUrl);
+
+      if (!success) {
+        setErrorMessage(
+          `Failed to get models from ${ollamaConfig.customOllamaUrl}. Please check the URL and try again.`,
+        );
+      }
     }
   };
 
@@ -85,6 +83,12 @@ const OllamaInstancePicker = () => {
               onSubmit={handleUrlSubmit}
             />
           </Box>
+        </Box>
+      )}
+
+      {errorMessage && (
+        <Box marginTop={1}>
+          <Text color="red">{errorMessage}</Text>
         </Box>
       )}
     </Box>
