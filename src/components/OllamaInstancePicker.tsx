@@ -76,8 +76,8 @@ const OllamaInstancePicker = () => {
             {secondaryColor("Enter URL to your hosted OLLAMA instance:")}
           </Text>
           <Box>
-            <Text>URL: </Text>
             <TextInput
+              placeholder="https://ollama.self-hosted.com"
               value={ollamaConfig.customOllamaUrl}
               onChange={(value) =>
                 setOllamaConfig((prev) => ({ ...prev, customOllamaUrl: value }))

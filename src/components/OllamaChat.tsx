@@ -146,11 +146,20 @@ const OllamaChat = () => {
           </Box>
         ))}
       </Box>
-      <Box flexDirection="row" gap={1} marginTop={1}>
+      <Box
+        flexDirection="row"
+        gap={1}
+        borderStyle="round"
+        borderColor="#999999"
+        borderBottom={true}
+        borderTop={true}
+        borderLeft={false}
+        borderRight={false}
+      >
         <Box backgroundColor={"#999999"} width={1} height={1} marginRight={1} />
         <TextInput
           key={inputKey}
-          placeholder="What file you wanna make or change?"
+          placeholder="What file you want octo to make or change?"
           value={userPrompt}
           onChange={setUserPrompt}
           onSubmit={handlePromptSubmit}
