@@ -1,4 +1,4 @@
-# text-2-act
+# octoact
 
 To install dependencies:
 
