@@ -1,6 +1,6 @@
 export const userData = {
-  pickedInstance: true,
-  pickedModle: true,
+  pickedInstance: false,
+  pickedModle: false,
   ollamaExternal: "",
-  selectedModelName: "qwen2.5-coder:7b",
+  selectedModelName: "",
 };
