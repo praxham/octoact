@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Box, Text, useInput } from "ink";
 import {
   secondaryColor,
@@ -19,7 +19,6 @@ const ModelPicker = () => {
     fetchModels();
   }, []);
 
-  // Keyboard Navigation Logic
   useInput((_, key) => {
     if (key.upArrow) {
       setActiveIndex((prev) => (prev > 0 ? prev - 1 : models.length - 1));
@@ -58,8 +57,7 @@ const ModelPicker = () => {
         const isSelected = index === activeIndex;
         return (
           <Box key={model.name}>
-            {/* Visual Indicator (Radio Button style) */}
-            <Text color={isSelected ? "cyan" : "white"}>
+            <Text color={isSelected ? "#99424A" : "#999999"}>
               {isSelected ? "◉ " : "◯ "}
               {model.name}
             </Text>

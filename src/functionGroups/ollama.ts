@@ -6,13 +6,14 @@ import {
 } from "./common";
 import { userData } from "../user";
 
-export const baseURL = userData.ollamaExternal || "http://localhost:11434/api";
+export const getBaseURL = () =>
+  userData.ollamaExternal || "http://localhost:11434/api";
 
 export const updateOllamaUrl = async (url: string) => {
   await updateFileWithContent(
-    "./src/ollama.ts",
-    /let ollamaExternal.*;/,
-    `let ollamaExternal = "${url}";`,
+    "./src/user.ts",
+    /ollamaExternal: ".*",/,
+    `ollamaExternal: "${url}",`,
   );
 
   await updateFileWithContent(
@@ -35,15 +36,38 @@ Picked:
 };
 
 export const getModels = async () => {
-  let tagsResponse;
   try {
-    tagsResponse = await fetch(baseURL + "/tags");
+    const tagsResponse = await fetch(getBaseURL() + "/tags");
+    const data = await tagsResponse.json();
+
+    if (!data?.models || !Array.isArray(data.models)) {
+      throw new Error(
+        "Invalid response from Ollama. Check your URL configuration.",
+      );
+    }
+
+    return data.models;
   } catch (e) {
     console.error("Something Went Wrong:", e);
+
+    // Reset user data and update src/user.ts
+    userData.ollamaExternal = "";
+    userData.pickedInstance = false;
+
+    await updateFileWithContent(
+      "./src/user.ts",
+      /ollamaExternal: ".*",/,
+      'ollamaExternal: "",',
+    );
+
+    await updateFileWithContent(
+      "./src/user.ts",
+      /pickedInstance: (true|false),/,
+      "pickedInstance: false,",
+    );
+
+    return null;
   }
-  const data = await tagsResponse?.json();
-  const models = data?.models;
-  return models;
 };
 
 export const sendPrompt = async (
@@ -87,7 +111,7 @@ export const sendPrompt = async (
     stream: false,
   };
   try {
-    const response = await fetch(baseURL + "/generate", {
+    const response = await fetch(getBaseURL() + "/generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(data),
